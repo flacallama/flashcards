@@ -13,6 +13,9 @@ router.post('/login', function(req, res, next){
   knex.raw(`select * from users where username = '${req.body.username}'`)
   .then(function(users){
     if(users.rows[0].password == `${req.body.password}`){
+      if(!req.cookies.stackNum){
+        res.cookie('stackNum', 1)
+      }
       res.cookie('userID', users.rows[0].id),
       res.cookie('username', users.rows[0].username),
       res.redirect('/study')
@@ -36,7 +39,7 @@ router.get('/study', function(req, res, next) {
 })
 
 router.post('/markcorrect', function(req, res, next) {
-  knex.raw(`INSERT INTO views VALUES (default, ${req.cookies.userID}, ${req.cookies.cardID}, '${req.cookies.start_time}', default, true, 'noneyet')`)
+  knex.raw(`INSERT INTO views VALUES (default, ${req.cookies.userID}, ${req.cookies.cardID}, default, default, true, 'noneyet')`)
   .then(function(input){
     res.clearCookie('cardId');
     res.clearCookie('start_time')
@@ -44,6 +47,24 @@ router.post('/markcorrect', function(req, res, next) {
   })
 })
 
+router.post('/markincorrect', function(req, res, next) {
+  knex.raw(`INSERT INTO views VALUES (default, ${req.cookies.userID}, ${req.cookies.cardID}, default, default, false, 'noneyet')`)
+  .then(function(input){
+    res.clearCookie('cardId');
+    res.clearCookie('start_time')
+    res.redirect('/study')
+  })
+})
+
+
+
+
+// handles the stack change button
+router.post('/changestack', function(req, res, next){
+  res.clearCookie('stackNum');
+  res.cookie('stackNum', `${req.body.changestack}`);
+  res.redirect('/study')
+})
 
 // router.get('/', function(req, res, next) {
 //   if (req.isAuthenticated()) {
