@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    form(method='post' action='/login')
+      input(type='text' name='username' placeholder='name')
+      input(type='password' name='password' placeholder='password')
+      button(type='submit') log in
+    br
+    a(href='/') home
+    block content
